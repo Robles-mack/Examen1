@@ -1,0 +1,1348 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Examen Oral — Frateli Centro Educativo</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:      #0d1117;
+    --surface: #161b22;
+    --card:    #1c2230;
+    --border:  rgba(255,255,255,0.07);
+    --accent:  #3b82f6;
+    --accent2: #8b5cf6;
+    --gold:    #f59e0b;
+    --teal:    #10b981;
+    --text:    #f0f4f8;
+    --muted:   #8b95a7;
+  }
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ══ HEADER ══ */
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0.85rem clamp(1rem, 4vw, 3rem);
+    display: flex;
+    align-items: center;
+    gap: clamp(0.6rem, 2vw, 1.2rem);
+    flex-wrap: wrap;
+  }
+  .logo {
+    width: clamp(44px, 7vw, 64px);
+    height: clamp(44px, 7vw, 64px);
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--gold);
+    flex-shrink: 0;
+  }
+  .header-text h1 {
+    font-family: 'Poppins', sans-serif;
+    font-size: clamp(1.1rem, 3vw, 1.7rem);
+    font-weight: 800;
+    background: linear-gradient(90deg, var(--gold) 0%, #fde68a 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: 0.04em;
+    line-height: 1.1;
+  }
+  .header-text p {
+    color: var(--muted);
+    font-size: clamp(0.6rem, 1.4vw, 0.78rem);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-top: 0.25rem;
+  }
+  .header-badge {
+    margin-left: auto;
+    background: rgba(245,158,11,0.12);
+    border: 1px solid rgba(245,158,11,0.3);
+    color: var(--gold);
+    font-size: clamp(0.6rem, 1.3vw, 0.72rem);
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+  @media (max-width: 480px) {
+    .header-badge { margin-left: 0; }
+  }
+
+  /* ══ LAYOUT ══ */
+  .layout {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
+    gap: clamp(1rem, 2.5vw, 1.5rem);
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: clamp(1rem, 3vw, 2rem) clamp(1rem, 4vw, 3rem) clamp(2rem, 4vw, 3rem);
+  }
+
+  /* ══ PANELS ══ */
+  .panel {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: clamp(1.2rem, 3vw, 1.8rem);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: clamp(0.9rem, 2vw, 1.2rem);
+  }
+  .panel-header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding-bottom: 0.9rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .panel-icon {
+    width: 34px; height: 34px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+  .icon-blue   { background: rgba(59,130,246,0.18); }
+  .icon-purple { background: rgba(139,92,246,0.18); }
+  .panel-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: clamp(0.9rem, 2vw, 1.05rem);
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: 0.03em;
+  }
+  .panel-sub {
+    font-size: 0.7rem;
+    color: var(--muted);
+    margin-top: 0.12rem;
+  }
+
+  /* ══ WHEEL ══ */
+  .wheel-wrap {
+    position: relative;
+    width: min(320px, 80vw);
+    height: min(320px, 80vw);
+    flex-shrink: 0;
+  }
+  .wheel-wrap canvas {
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 50%;
+    border: 3px solid rgba(255,255,255,0.08);
+  }
+  .wheel-wrap.spinning canvas {
+    border-color: rgba(59,130,246,0.5);
+  }
+  .pointer {
+    position: absolute;
+    top: 50%; right: -16px;
+    transform: translateY(-50%);
+    width: 0; height: 0;
+    border-top: 13px solid transparent;
+    border-bottom: 13px solid transparent;
+    border-right: 26px solid var(--gold);
+    z-index: 10;
+  }
+
+  /* ══ RESULT ══ */
+  .result-box {
+    width: 100%;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 0.8rem 1.2rem;
+    text-align: center;
+    min-height: 52px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .result-name {
+    font-family: 'Poppins', sans-serif;
+    font-size: clamp(1.2rem, 4vw, 1.6rem);
+    font-weight: 800;
+    color: var(--gold);
+    animation: popIn .4s cubic-bezier(.34,1.56,.64,1);
+  }
+  .result-placeholder { color: var(--muted); font-size: clamp(0.7rem, 2vw, 0.82rem); letter-spacing: 0.08em; }
+
+  @keyframes popIn {
+    0%   { transform: scale(.4) rotate(-8deg); opacity:0; }
+    100% { transform: scale(1)  rotate(0deg);  opacity:1; }
+  }
+
+  /* ══ COUNTER ══ */
+  .counter-row {
+    display: flex; gap: 0.75rem; width: 100%; justify-content: center; flex-wrap: wrap;
+  }
+  .counter-pill {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 0.28rem 0.9rem;
+    font-size: clamp(0.68rem, 1.5vw, 0.78rem);
+    color: var(--muted);
+  }
+  .counter-pill span { color: var(--accent); font-weight: 600; }
+
+  /* ══ BUTTONS ══ */
+  .spin-btn {
+    font-family: 'Poppins', sans-serif;
+    font-size: clamp(0.82rem, 2vw, 0.95rem);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    padding: 0.65rem clamp(1.5rem, 5vw, 2.5rem);
+    border: none; border-radius: 10px;
+    cursor: pointer;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #fff;
+    transition: opacity .2s, transform .15s;
+    width: clamp(160px, 60%, 260px);
+  }
+  .spin-btn:hover  { opacity: .9; }
+  .spin-btn:active { transform: scale(.97); }
+  .spin-btn:disabled { opacity: .35; cursor: not-allowed; }
+
+  .reset-btn {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--muted);
+    font-size: clamp(0.68rem, 1.5vw, 0.75rem);
+    padding: 0.3rem 0.8rem;
+    cursor: pointer;
+    transition: all .2s;
+    font-family: 'Inter', sans-serif;
+  }
+  .reset-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ══ Q&A ══ */
+  .progress-row {
+    display: flex; align-items: center; gap: 0.8rem; width: 100%;
+  }
+  .prog-bg {
+    flex: 1; height: 6px;
+    background: rgba(255,255,255,0.07);
+    border-radius: 10px; overflow: hidden;
+  }
+  .prog-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--teal), var(--accent2));
+    border-radius: 10px;
+    transition: width .5s cubic-bezier(.4,0,.2,1);
+  }
+  .prog-label {
+    font-size: clamp(0.68rem, 1.5vw, 0.75rem);
+    color: var(--muted); white-space: nowrap; min-width: 40px; text-align: right;
+  }
+
+  .qa-card {
+    width: 100%;
+    background: rgba(255,255,255,0.03);
+    border: 1.5px solid rgba(139,92,246,0.25);
+    border-radius: 14px;
+    padding: clamp(0.9rem, 2.5vw, 1.4rem);
+    transition: border-color .2s;
+    display: flex; flex-direction: column;
+    align-items: center;
+    text-align: center; gap: 0.75rem;
+    user-select: none;
+    animation: cardEntrance .4s ease;
+  }
+  @keyframes cardEntrance {
+    from { opacity:0; transform: scale(.96) translateY(10px); }
+    to   { opacity:1; transform: scale(1) translateY(0); }
+  }
+
+  .qa-label {
+    font-size: clamp(0.58rem, 1.4vw, 0.62rem);
+    font-weight: 600;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    padding: 0.22rem 0.7rem; border-radius: 20px;
+  }
+  .l-idle { background: rgba(139,92,246,.2);  color: #a78bfa; }
+  .l-q    { background: rgba(16,185,129,.18); color: #6ee7b7; }
+  .l-a    { background: rgba(245,158,11,.18); color: var(--gold); }
+  .l-done { background: rgba(59,130,246,.18); color: #93c5fd; }
+
+  .qa-text {
+    font-size: clamp(0.9rem, 2.2vw, 1.05rem);
+    font-weight: 600;
+    line-height: 1.55; color: var(--text);
+  }
+  .qa-num  { font-size: clamp(0.65rem, 1.5vw, 0.72rem); color: var(--muted); letter-spacing: 0.08em; }
+  .qa-hint { font-size: clamp(0.62rem, 1.4vw, 0.7rem); color: var(--muted); }
+
+  /* ══ OPTIONS ══ */
+  .options-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.55rem;
+    width: 100%;
+  }
+  @media (max-width: 480px) {
+    .options-grid { grid-template-columns: 1fr; }
+  }
+  .opt-btn {
+    background: rgba(255,255,255,0.04);
+    border: 1.5px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 0.6rem 0.75rem;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: clamp(0.72rem, 1.8vw, 0.82rem);
+    line-height: 1.4;
+    cursor: pointer;
+    text-align: left;
+    display: flex; align-items: flex-start; gap: 0.5rem;
+    transition: background .15s, border-color .15s, transform .12s;
+    opacity: 0;
+    animation: optSlide .3s ease forwards;
+  }
+  .opt-btn:nth-child(1) { animation-delay: .04s; }
+  .opt-btn:nth-child(2) { animation-delay: .10s; }
+  .opt-btn:nth-child(3) { animation-delay: .16s; }
+  .opt-btn:nth-child(4) { animation-delay: .22s; }
+  @keyframes optSlide {
+    from { opacity:0; transform: translateY(12px); }
+    to   { opacity:1; transform: translateY(0); }
+  }
+  .opt-btn:hover:not(:disabled) {
+    background: rgba(139,92,246,0.15);
+    border-color: rgba(139,92,246,0.5);
+    transform: translateY(-1px);
+  }
+  .opt-btn:active:not(:disabled) { transform: scale(.97); }
+  .opt-btn:disabled { cursor: default; }
+  .opt-letter {
+    flex-shrink: 0;
+    width: 20px; height: 20px;
+    border-radius: 6px;
+    background: rgba(139,92,246,0.25);
+    color: #a78bfa;
+    font-size: 0.68rem; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    transition: background .2s, color .2s;
+  }
+  .opt-btn.correct {
+    background: rgba(16,185,129,0.18) !important;
+    border-color: #10b981 !important;
+    animation: correctPulse .5s ease forwards;
+  }
+  .opt-btn.correct .opt-letter { background: #10b981; color: #fff; }
+  @keyframes correctPulse {
+    0%  { transform: scale(1); }
+    35% { transform: scale(1.05); }
+    65% { transform: scale(0.98); }
+    100%{ transform: scale(1); }
+  }
+  .opt-btn.wrong {
+    background: rgba(239,68,68,0.13) !important;
+    border-color: rgba(239,68,68,0.45) !important;
+    animation: wrongShake .4s ease forwards;
+  }
+  .opt-btn.wrong .opt-letter { background: rgba(239,68,68,0.55); color: #fff; }
+  @keyframes wrongShake {
+    0%,100% { transform: translateX(0); }
+    20%     { transform: translateX(-6px); }
+    40%     { transform: translateX(6px); }
+    60%     { transform: translateX(-4px); }
+    80%     { transform: translateX(4px); }
+  }
+  .qa-feedback {
+    width: 100%;
+    border-radius: 10px;
+    padding: 0.55rem 0.9rem;
+    font-size: clamp(0.76rem, 1.8vw, 0.86rem);
+    font-weight: 500;
+    line-height: 1.45;
+    display: none;
+    animation: fbIn .3s ease;
+  }
+  .qa-feedback.show { display: block; }
+  .qa-feedback.fb-correct { background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.35); color: #6ee7b7; }
+  .qa-feedback.fb-wrong   { background: rgba(239,68,68,0.1);   border: 1px solid rgba(239,68,68,0.3);   color: #fca5a5; }
+  @keyframes fbIn {
+    from { opacity:0; transform: translateY(6px); }
+    to   { opacity:1; transform: translateY(0); }
+  }
+  .qa-next-btn {
+    font-family: 'Poppins', sans-serif;
+    font-size: clamp(0.78rem, 1.9vw, 0.88rem);
+    font-weight: 700; letter-spacing: 0.06em;
+    padding: 0.5rem 1.6rem;
+    border: none; border-radius: 10px;
+    cursor: pointer;
+    background: linear-gradient(135deg, var(--teal), var(--accent));
+    color: #fff;
+    transition: opacity .2s, transform .15s;
+    display: none; animation: fbIn .3s ease;
+  }
+  .qa-next-btn.show { display: inline-block; }
+  .qa-next-btn:hover  { opacity:.88; }
+  .qa-next-btn:active { transform: scale(.96); }
+  .score-row {
+    display: flex; gap: 0.6rem; width: 100%; justify-content: center; flex-wrap: wrap;
+  }
+  .score-pill {
+    background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+    border-radius: 20px; padding: 0.28rem 0.9rem;
+    font-size: clamp(0.68rem, 1.5vw, 0.78rem); color: var(--muted);
+  }
+  .score-pill .sc { color: var(--teal); font-weight: 600; }
+  .score-pill .sw { color: #f87171;    font-weight: 600; }
+
+  /* ══ CONFETTI ══ */
+  #confetti-canvas {
+    position: fixed; inset: 0;
+    width: 100%; height: 100%;
+    pointer-events: none; z-index: 999;
+  }
+
+  /* ══ TABLET: stack a single column ══ */
+  @media (max-width: 820px) {
+    .layout {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* ══ MOBILE tweaks ══ */
+  @media (max-width: 480px) {
+    header { justify-content: flex-start; }
+    .wheel-wrap { width: min(280px, 88vw); height: min(280px, 88vw); }
+    .pointer { right: -14px; border-top-width: 11px; border-bottom-width: 11px; border-right-width: 22px; }
+    .spin-btn { width: 100%; }
+  }
+
+  /* ══ STUDENT TRACKER PANEL ══ */
+  .tracker-panel {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: clamp(1rem, 2.5vw, 1.5rem);
+    display: flex; flex-direction: column; gap: 1rem;
+    margin: 0 clamp(1rem, 4vw, 3rem) clamp(1rem,2vw,1.5rem);
+    max-width: 1400px;
+    margin-left: auto; margin-right: auto;
+    width: calc(100% - clamp(2rem, 8vw, 6rem));
+  }
+  .tracker-header {
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: .6rem;
+  }
+  .tracker-title {
+    font-family: 'Poppins', sans-serif; font-size: clamp(.85rem,2vw,1rem); font-weight:700; color:var(--text);
+  }
+  .tracker-actions { display:flex; gap:.5rem; flex-wrap:wrap; }
+  .export-btn {
+    font-family:'Poppins',sans-serif; font-size:.8rem; font-weight:700; letter-spacing:.05em;
+    padding:.42rem 1.1rem; border:none; border-radius:8px; cursor:pointer;
+    background:linear-gradient(135deg,var(--teal),#0891b2); color:#fff;
+    transition:opacity .2s, transform .15s;
+  }
+  .export-btn:hover{opacity:.88;} .export-btn:active{transform:scale(.96);}
+  .export-btn:disabled{opacity:.35;cursor:not-allowed;}
+
+  /* Student grid */
+  .students-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%,160px),1fr));
+    gap: .55rem;
+  }
+  .student-card {
+    background: rgba(255,255,255,0.04);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: .55rem .8rem;
+    display:flex; flex-direction:column; gap:.35rem;
+    transition: border-color .2s, background .2s;
+    position: relative; overflow: hidden;
+  }
+  .student-card.active-student {
+    border-color: var(--gold);
+    background: rgba(245,158,11,0.08);
+    box-shadow: 0 0 0 1px rgba(245,158,11,0.2);
+  }
+  .student-card.done-student { border-color: rgba(255,255,255,0.04); opacity:.55; }
+  .sc-name {
+    font-family:'Poppins',sans-serif; font-size:.78rem; font-weight:700; color:var(--text);
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  .sc-stats { display:flex; gap:.4rem; align-items:center; }
+  .sc-stat { font-size:.68rem; color:var(--muted); }
+  .sc-stat .val { font-weight:600; }
+  .sc-stat .v-green { color:var(--teal); }
+  .sc-stat .v-red   { color:#f87171; }
+  .sc-bar-bg {
+    height:4px; background:rgba(255,255,255,0.07); border-radius:4px; overflow:hidden;
+  }
+  .sc-bar-fill {
+    height:100%; border-radius:4px;
+    background: linear-gradient(90deg, var(--teal), var(--accent2));
+    transition: width .4s cubic-bezier(.4,0,.2,1);
+  }
+  .sc-pct { font-size:.66rem; color:var(--muted); text-align:right; }
+  .active-badge {
+    position:absolute; top:5px; right:6px;
+    font-size:.55rem; font-weight:700; letter-spacing:.08em;
+    background:var(--gold); color:#0d1117;
+    padding:.1rem .4rem; border-radius:20px;
+    text-transform:uppercase;
+  }
+
+  /* Current student display in Q panel */
+  .current-student-bar {
+    width:100%;
+    background:rgba(245,158,11,0.1);
+    border:1px solid rgba(245,158,11,0.3);
+    border-radius:10px;
+    padding:.5rem 1rem;
+    display:flex; align-items:center; justify-content:space-between; gap:.5rem;
+    min-height:40px;
+  }
+  .csb-name {
+    font-family:'Poppins',sans-serif; font-size:clamp(.85rem,2.2vw,1rem); font-weight:800; color:var(--gold);
+    animation: popIn .4s cubic-bezier(.34,1.56,.64,1);
+  }
+  .csb-placeholder { color:var(--muted); font-size:.78rem; }
+  .csb-stats { font-size:.72rem; color:var(--muted); white-space:nowrap; }
+
+  /* End screen */
+  .end-screen {
+    display:none; flex-direction:column; align-items:center; gap:1.2rem;
+    padding:1.5rem; text-align:center;
+  }
+  .end-screen.show { display:flex; }
+  .end-title {
+    font-family:'Poppins',sans-serif; font-size:clamp(1.3rem,4vw,1.8rem); font-weight:900;
+    background:linear-gradient(90deg,var(--gold),#fde68a); -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent; background-clip:text;
+  }
+  .end-table {
+    width:100%; border-collapse:collapse; font-size:clamp(.7rem,1.8vw,.82rem);
+  }
+  .end-table th {
+    background:rgba(255,255,255,0.06); color:var(--muted);
+    padding:.4rem .7rem; text-align:left; font-weight:600;
+    border-bottom:1px solid var(--border);
+  }
+  .end-table td {
+    padding:.4rem .7rem; border-bottom:1px solid rgba(255,255,255,0.04); color:var(--text);
+  }
+  .end-table tr:last-child td { border-bottom:none; }
+  .end-table .pct-cell { font-weight:700; }
+  .pct-high { color:var(--teal); }
+  .pct-mid  { color:var(--gold); }
+  .pct-low  { color:#f87171; }
+
+</style>
+</head>
+<body>
+
+<canvas id="confetti-canvas"></canvas>
+<div id="flashOverlay" style="position:fixed;inset:0;pointer-events:none;z-index:998;opacity:0;transition:opacity .15s;"></div>
+
+<header>
+  <img class="logo" src="data:image/jpeg;base64,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" alt="Logo Frateli Centro Educativo S.C.">
+  <div class="header-text">
+    <h1>TERCER TRIMESTRE</h1>
+    <p>Campo Formativo · Ética, Naturaleza y Sociedades · Geografía · Historia · 6°A</p>
+  </div>
+  <div class="header-badge">Examen Oral</div>
+</header>
+
+<!-- STUDENT TRACKER -->
+<div class="tracker-panel" id="trackerPanel">
+  <div class="tracker-header">
+    <div class="tracker-title">📊 Seguimiento por Alumno</div>
+    <div class="tracker-actions">
+      <button class="export-btn" id="exportBtn" onclick="exportExcel()" disabled>⬇ Exportar Excel</button>
+    </div>
+  </div>
+  <div class="students-grid" id="studentsGrid"></div>
+</div>
+
+<div class="layout">
+
+  <!-- RULETA ALUMNOS -->
+  <div class="panel">
+    <div class="panel-header">
+      <div class="panel-icon icon-blue">🎰</div>
+      <div>
+        <div class="panel-title">RULETA DE ALUMNOS</div>
+        <div class="panel-sub">Gira para seleccionar al siguiente alumno</div>
+      </div>
+    </div>
+
+    <div class="wheel-wrap" id="wheelWrap">
+      <canvas id="wheelCanvas" width="320" height="320"></canvas>
+      <div class="pointer"></div>
+    </div>
+
+    <div class="result-box" id="nameResult">
+      <span class="result-placeholder">PRESIONA GIRAR PARA COMENZAR</span>
+    </div>
+
+    <div class="counter-row">
+      <div class="counter-pill">Disponibles: <span id="availCount">0</span></div>
+      <div class="counter-pill">Total: <span id="totalCount">0</span></div>
+    </div>
+
+    <button class="spin-btn" id="spinBtn" onclick="spinWheel()">⟳ &nbsp;GIRAR</button>
+    <button class="reset-btn" onclick="resetWheel()">↺ Reiniciar ruleta</button>
+  </div>
+
+  <!-- PREGUNTAS OPCIÓN MÚLTIPLE -->
+  <div class="panel">
+    <div class="panel-header">
+      <div class="panel-icon icon-purple">🎯</div>
+      <div>
+        <div class="panel-title">OPCIÓN MÚLTIPLE</div>
+        <div class="panel-sub">Elige la respuesta correcta</div>
+      </div>
+    </div>
+
+    <!-- Active student -->
+    <div class="current-student-bar" id="currentStudentBar">
+      <span class="csb-placeholder" id="csbName">Gira la ruleta para elegir alumno</span>
+      <span class="csb-stats" id="csbStats"></span>
+    </div>
+
+    <div class="progress-row">
+      <div class="prog-bg">
+        <div class="prog-fill" id="progressFill" style="width:0%"></div>
+      </div>
+      <span class="prog-label" id="progressLabel">0 / 0</span>
+    </div>
+
+    <div class="score-row">
+      <div class="score-pill">✅ Correctas: <span class="sc" id="scoreCorrect">0</span></div>
+      <div class="score-pill">❌ Incorrectas: <span class="sw" id="scoreWrong">0</span></div>
+    </div>
+
+    <div style="width:100%">
+      <div class="qa-card" id="qaCard">
+        <span class="qa-label l-idle" id="qaLabel">GIRA LA RULETA PARA EMPEZAR</span>
+        <div class="qa-text" id="qaText">Selecciona un alumno con la ruleta para comenzar las preguntas</div>
+        <div class="qa-num" id="qaNumber"></div>
+        <div class="options-grid" id="optionsGrid"></div>
+        <div class="qa-feedback" id="qaFeedback"></div>
+        <button class="qa-next-btn" id="qaNextBtn" onclick="nextQuestion()">Siguiente →</button>
+      </div>
+
+      <!-- End screen (shown when all questions used) -->
+      <div class="end-screen" id="endScreen">
+        <div class="end-title">🏆 ¡Examen Completado!</div>
+        <p style="color:var(--muted);font-size:.85rem;">Se han agotado todas las preguntas del banco.</p>
+        <table class="end-table" id="endTable"></table>
+        <button class="export-btn" onclick="exportExcel()" style="margin-top:.5rem">⬇ Descargar Excel</button>
+      </div>
+    </div>
+
+    <button class="reset-btn" id="qaResetBtn" onclick="resetQa()">↺ Reiniciar preguntas</button>
+  </div>
+
+</div>
+
+<script>
+
+const ALL_NAMES = [
+  "IÑAKI","BASTIAN","CHRISTIAN","AXEL","ZOE","ARANTZA",
+  "CESAR","MAXIMILIANO","JOSELYN","JAMES","LISANDRO","ELENA","NAIARA"
+];
+
+const ALL_QA = [
+  {
+    q: "¿Qué entiendes por pueblos originarios?",
+    a: "Se refiere a los primeros habitantes de México, con sus propias lenguas y culturas",
+    opts: [
+      "Lengua y tradición",
+      "Se refiere a los primeros habitantes de México, con sus propias lenguas y culturas",
+      "Es un lugar donde las personas no emigran"
+    ]
+  },
+  {
+    q: "¿Cuántos pueblos originarios existen en México?",
+    a: "68",
+    opts: ["68", "125", "24"]
+  },
+  {
+    q: "¿Es lo mismo afromexicanos y afrodescendientes?",
+    a: "No",
+    opts: ["No", "No sé", "Sí, porque son africanos"]
+  },
+  {
+    q: "¿Qué entiendes por pueblos afrodescendientes?",
+    a: "Son personas cuyos antepasados vinieron de África y forman parte de la cultura mexicana",
+    opts: [
+      "Son personas cuyos antepasados vinieron de África y forman parte de la cultura mexicana",
+      "Son personas que se fueron a vivir a Estados Unidos",
+      "Son personas que viven en Groenlandia"
+    ]
+  },
+  {
+    q: "¿En dónde se localizan los pueblos afromexicanos?",
+    a: "Oaxaca, Veracruz, Chiapas, Michoacán, Coahuila y Guerrero",
+    opts: [
+      "Japón, Venezuela, España",
+      "Oaxaca, Veracruz, Chiapas, Michoacán, Coahuila y Guerrero",
+      "Tabasco, Puebla, Cd. de México, Zacatecas"
+    ]
+  },
+  {
+    q: "¿Qué alimentos son de origen africano que consumimos hoy?",
+    a: "Plátano, ajonjolí, tamarindo, arroz, yuca, sandía, Jamaica, café, melón",
+    opts: [
+      "Plátano, ajonjolí, tamarindo, arroz, yuca, sandía, Jamaica, café, melón",
+      "Fresa, kiwi, naranja, pera",
+      "Mandarina, arroz, puerro"
+    ]
+  },
+  {
+    q: "¿Cuáles son las líneas imaginarias?",
+    a: "Paralelos, meridianos, meridiano de Greenwich",
+    opts: [
+      "Paralelos, meridianos, meridiano de Greenwich",
+      "Horizontales, verticales",
+      "Norte, sur, este, oeste"
+    ]
+  },
+  {
+    q: "¿Qué es el Ecuador?",
+    a: "Es una línea imaginaria, la más importante de la Tierra; divide al planeta en hemisferio norte y hemisferio sur",
+    opts: [
+      "Es una línea curva donde se divide la tierra",
+      "Es una línea imaginaria, la más importante de la Tierra; divide al planeta en hemisferio norte y hemisferio sur",
+      "Son líneas perpendiculares"
+    ]
+  },
+  {
+    q: "¿Son líneas horizontales que rodean la Tierra?",
+    a: "Trópico de Cáncer y Trópico de Capricornio",
+    opts: [
+      "Trópico de Cáncer y Trópico de Capricornio",
+      "Marte y Venus",
+      "Trópico de Sagitario y Trópico de Piscis"
+    ]
+  },
+  {
+    q: "¿Qué son los meridianos?",
+    a: "Son líneas imaginarias que van de polo a polo y sirven para medir la longitud",
+    opts: [
+      "Son líneas perpendiculares",
+      "Son líneas curvas",
+      "Son líneas imaginarias que van de polo a polo y sirven para medir la longitud"
+    ]
+  },
+  {
+    q: "¿Qué es la latitud?",
+    a: "Es la distancia que existe entre un punto cualquiera y el Ecuador",
+    opts: [
+      "Es la distancia que hay de la tierra a Marte",
+      "Es la distancia de mi casa al colegio",
+      "Es la distancia que existe entre un punto cualquiera y el Ecuador"
+    ]
+  },
+  {
+    q: "Es la medida del área comprendida entre el meridiano de Greenwich y el meridiano que pasa por un punto. ¿Cómo se llama?",
+    a: "Longitud",
+    opts: ["Longitud", "Latitud", "Eje de simetría"]
+  },
+  {
+    q: "¿Cuáles son los continentes?",
+    a: "Americano, Europeo, Asiático, Africano, Oceanía",
+    opts: [
+      "Americano, Europeo, Asiático, Africano, Oceanía",
+      "Estados Unidos, Reino Unido, Japón",
+      "México, España, Nicaragua"
+    ]
+  },
+  {
+    q: "Bélgica es un país. ¿A qué continente pertenece?",
+    a: "Europeo",
+    opts: ["Americano", "Asiático", "Europeo"]
+  },
+  {
+    q: "Angola es un país. ¿A qué continente pertenece?",
+    a: "Africano",
+    opts: ["Africano", "Americano", "Asiático"]
+  },
+  {
+    q: "¿Cuál es el continente más extenso?",
+    a: "Asia",
+    opts: ["América", "Oceanía", "Asia"]
+  },
+  {
+    q: "¿En qué continente acostumbran quitarse los zapatos antes de entrar a una casa o templo?",
+    a: "Asia",
+    opts: ["Oceanía", "Americano", "Asia"]
+  },
+  {
+    q: "El Porfiriato comenzó a finales de:",
+    a: "1877",
+    opts: ["2019", "1910", "1877"]
+  },
+  {
+    q: "La dictadura de Porfirio Díaz terminó en:",
+    a: "1911",
+    opts: ["1956", "1911", "2019"]
+  },
+  {
+    q: "¿Cuánto duró el Porfiriato?",
+    a: "34 años",
+    opts: ["100 años", "12 años", "34 años"]
+  },
+  {
+    q: "¿En qué año inició la Revolución Mexicana?",
+    a: "1910",
+    opts: ["1910", "1740", "1911"]
+  },
+  {
+    q: "¿Cuál partido exigía elecciones democráticas?",
+    a: "Partido Antirreeleccionista",
+    opts: ["Partido Antirreeleccionista", "PRI", "MORENA"]
+  },
+  {
+    q: "¿Cuáles son las principales causas de la Revolución Mexicana?",
+    a: "La dictadura de Porfirio Díaz, pobreza, desigualdad, despojo de tierras a los campesinos, falta de democracia y libertades",
+    opts: [
+      "El hambre y las armas",
+      "Las tierras y las cosechas",
+      "La dictadura de Porfirio Díaz, pobreza, desigualdad, despojo de tierras a los campesinos, falta de democracia y libertades"
+    ]
+  },
+  {
+    q: "¿Quién ganó las elecciones en 1911?",
+    a: "Francisco I. Madero",
+    opts: ["Francisco I. Madero", "Venustiano Carranza", "Benito Juárez"]
+  },
+  {
+    q: "¿Cuál fue la idea principal de Francisco I. Madero?",
+    a: "La de luchar por la justicia social y la democracia",
+    opts: [
+      "La de luchar por la justicia social y la democracia",
+      "Luchar por las tierras y los campesinos",
+      "Luchar por la independencia"
+    ]
+  },
+  {
+    q: "¿Cómo se llama el caudillo cuya lucha principal fue por los derechos de los campesinos y la redistribución de tierras?",
+    a: "Emiliano Zapata",
+    opts: ["Ignacio Allende", "Aquiles Serdán", "Emiliano Zapata"]
+  },
+  {
+    q: "¿Quién formó su propio ejército de mujeres y se autonombró general durante la Revolución?",
+    a: "Petra Herrera",
+    opts: ["Petra Herrera", "Carmen Serdán", "Mariana Ochoa"]
+  },
+  {
+    q: "¿Quién luchó contra la opresión y la explotación del trabajador?",
+    a: "Francisco Villa",
+    opts: ["Miguel Hidalgo", "Emiliano Zapata", "Francisco Villa"]
+  },
+  {
+    q: "¿Quién nombró teniente coronel a María de la Luz Espinoza Barrera por ser una hábil y temeraria jinete?",
+    a: "Emiliano Zapata",
+    opts: ["Emiliano Zapata", "Agustín Melgar", "Ricardo Salinas"]
+  },
+  {
+    q: "Estado donde se encuentra la casa de los hermanos Serdán, hoy convertida en museo.",
+    a: "Puebla",
+    opts: ["Oaxaca", "México", "Puebla"]
+  },
+  {
+    q: "Estado donde se encuentra la sede del Congreso Constitucional que dio origen a la Constitución de 1917.",
+    a: "Querétaro",
+    opts: ["Querétaro", "Oaxaca", "Veracruz"]
+  },
+  {
+    q: "Estado donde se encuentra la hacienda de Chinameca, donde Emiliano Zapata fue emboscado y traicionado en 1919.",
+    a: "Morelos",
+    opts: ["Hidalgo", "Querétaro", "Morelos"]
+  },
+  {
+    q: "Ciudad de Coahuila donde se vivieron múltiples revueltas durante la Revolución.",
+    a: "Torreón",
+    opts: ["Torreón", "Nayarit", "Tuxtla Gutiérrez"]
+  },
+  {
+    q: "Estado del norte donde Madero fue derrocado por Pascual Orozco y que tiene un museo dedicado a la Revolución.",
+    a: "Chihuahua",
+    opts: ["Cd. México", "Chihuahua", "Morelia"]
+  },
+  {
+    q: "Ciudad donde se encuentra la antigua Ciudadela y la Biblioteca de México, ocupadas por rebeldes que buscaban destituir a Francisco I. Madero.",
+    a: "Ciudad de México",
+    opts: ["Ciudad de México", "Jalapa", "Mérida"]
+  },
+  {
+    q: "Ciudad donde se ubica el cerro de la Bufa, donde las tropas de Pancho Villa vencieron al ejército huertista el 23 de junio de 1914.",
+    a: "Zacatecas",
+    opts: ["Nuevo León", "Zacatecas", "San Luis Potosí"]
+  },
+];
+
+const PALETTE = [
+  '#8b82f6','#6366f1','#8b5cf6','#a855f7',
+  '#10b981','#14b8a6','#06b6d4','#0ea5e9',
+  '#f59e0b','#f97316','#ef4444','#ec4899',
+  '#84cc16','#22c55e',
+];
+
+/* ══ WHEEL ══ */
+const canvas = document.getElementById('wheelCanvas');
+const ctx = canvas.getContext('2d');
+const W = canvas.width, H = canvas.height;
+const cx = W/2, cy = H/2, RADIUS = W/2 - 8;
+
+let usedSet = new Set(), currentAngle = 0, isSpinning = false;
+
+function availableCount() { return ALL_NAMES.length - usedSet.size; }
+
+function drawWheel(angle) {
+  const n = ALL_NAMES.length, arc = (2*Math.PI)/n;
+  ctx.clearRect(0,0,W,H);
+  for (let i=0;i<n;i++) {
+    const s=angle+i*arc, e=s+arc, blocked=usedSet.has(i);
+    ctx.beginPath(); ctx.moveTo(cx,cy);
+    ctx.arc(cx,cy,RADIUS,s,e);
+    ctx.fillStyle = blocked ? 'rgba(30,35,50,0.9)' : PALETTE[i%PALETTE.length];
+    ctx.fill();
+    ctx.strokeStyle='rgba(13,17,23,0.6)'; ctx.lineWidth=1.5; ctx.stroke();
+    ctx.save(); ctx.translate(cx,cy); ctx.rotate(s+arc/2); ctx.textAlign='right';
+    let fs=Math.min(12,(RADIUS*0.68)/(ALL_NAMES[i].length*0.52));
+    fs=Math.max(7,fs);
+    ctx.font=`600 ${fs}px Inter`;
+    if (blocked) {
+      ctx.fillStyle='rgba(255,255,255,0.2)';
+      ctx.fillText(ALL_NAMES[i],RADIUS-12,fs/3);
+      const tw=ctx.measureText(ALL_NAMES[i]).width;
+      ctx.strokeStyle='rgba(239,68,68,0.6)'; ctx.lineWidth=1.2;
+      ctx.beginPath();
+      ctx.moveTo(RADIUS-12-tw,fs/3-fs*0.3); ctx.lineTo(RADIUS-12,fs/3-fs*0.3);
+      ctx.stroke();
+    } else {
+      ctx.fillStyle='rgba(255,255,255,0.95)';
+      ctx.shadowColor='rgba(0,0,0,0.7)'; ctx.shadowBlur=3;
+      ctx.fillText(ALL_NAMES[i],RADIUS-12,fs/3);
+    }
+    ctx.restore();
+  }
+  ctx.beginPath(); ctx.arc(cx,cy,20,0,2*Math.PI);
+  const g=ctx.createRadialGradient(cx-4,cy-4,2,cx,cy,20);
+  g.addColorStop(0,'#fff'); g.addColorStop(1,'#f59e0b');
+  ctx.fillStyle=g; ctx.fill();
+  ctx.strokeStyle='#0d1117'; ctx.lineWidth=2; ctx.stroke();
+}
+
+function updateCounter() {
+  document.getElementById('availCount').textContent=availableCount();
+  document.getElementById('totalCount').textContent=ALL_NAMES.length;
+}
+
+function spinWheel() {
+  if (isSpinning||availableCount()===0) return;
+  // If there's a current student mid-session, commit them first
+  if (currentStudentIdx !== null) {
+    usedSet.add(currentStudentIdx);
+    updateCounter(); drawWheel(currentAngle);
+  }
+  isSpinning=true;
+  document.getElementById('spinBtn').disabled=true;
+  document.getElementById('wheelWrap').classList.add('spinning');
+  const extra=6+Math.floor(Math.random()*5);
+  const target=currentAngle+extra*2*Math.PI+Math.random()*2*Math.PI;
+  const duration=4000+Math.random()*1500;
+  const t0=performance.now(), a0=currentAngle;
+  function ease(t){ return 1-Math.pow(1-t,4); }
+  function animate(now) {
+    const p=Math.min((now-t0)/duration,1);
+    currentAngle=a0+(target-a0)*ease(p);
+    drawWheel(currentAngle);
+    if (p<1) { requestAnimationFrame(animate); }
+    else {
+      currentAngle=target%(2*Math.PI);
+      isSpinning=false;
+      document.getElementById('wheelWrap').classList.remove('spinning');
+      pickWinner();
+    }
+  }
+  requestAnimationFrame(animate);
+}
+
+function pickWinner() {
+  const n=ALL_NAMES.length, arc=(2*Math.PI)/n;
+  let norm=((-currentAngle)%(2*Math.PI)+2*Math.PI)%(2*Math.PI);
+  let idx=Math.floor(norm/arc)%n, attempts=0;
+  while (usedSet.has(idx)&&attempts<n) { idx=(idx+1)%n; attempts++; }
+  if (usedSet.has(idx)) {
+    document.getElementById('nameResult').innerHTML='<span class="result-name" style="font-size:1rem">🎉 ¡Todos participaron!</span>';
+    document.getElementById('spinBtn').disabled=true;
+    return;
+  }
+  // Set current student
+  currentStudentIdx = idx;
+  const name = ALL_NAMES[idx];
+  document.getElementById('nameResult').innerHTML=`<span class="result-name">🏆 ${name}</span>`;
+  updateCounter(); drawWheel(currentAngle); launchConfetti();
+  document.getElementById('spinBtn').disabled=availableCount()===0;
+
+  // Initialize this student's record if needed
+  if (!studentData[idx]) {
+    studentData[idx] = { name, correct:0, wrong:0, total:0 };
+  }
+  setActiveStudent(idx);
+  updateStudentsGrid();
+
+  // Start questions if bank not empty
+  if (qaUsed >= ALL_QA.length) {
+    showEndScreen();
+  } else {
+    showQuestion();
+  }
+}
+
+function resetWheel() {
+  usedSet=new Set(); currentAngle=0; isSpinning=false;
+  currentStudentIdx=null;
+  document.getElementById('spinBtn').disabled=false;
+  document.getElementById('nameResult').innerHTML='<span class="result-placeholder">PRESIONA GIRAR PARA COMENZAR</span>';
+  updateCounter(); drawWheel(0);
+  clearActiveStudent();
+}
+updateCounter(); drawWheel(0);
+
+/* ══ STUDENT TRACKING ══ */
+let studentData = {};   // keyed by ALL_NAMES index
+let currentStudentIdx = null;
+
+function setActiveStudent(idx) {
+  const name = ALL_NAMES[idx];
+  const sd = studentData[idx];
+  document.getElementById('csbName').outerHTML =
+    `<span class="csb-name" id="csbName">👤 ${name}</span>`;
+  updateCsbStats(idx);
+  updateStudentsGrid();
+}
+
+function clearActiveStudent() {
+  document.getElementById('csbName').outerHTML =
+    `<span class="csb-placeholder" id="csbName">Gira la ruleta para elegir alumno</span>`;
+  document.getElementById('csbStats').textContent = '';
+  updateStudentsGrid();
+}
+
+function updateCsbStats(idx) {
+  const sd = studentData[idx];
+  if (!sd) return;
+  const pct = sd.total > 0 ? Math.round(sd.correct/sd.total*100) : 0;
+  document.getElementById('csbStats').textContent = `${sd.correct}✅ ${sd.wrong}❌ ${pct}%`;
+}
+
+function buildStudentCard(idx) {
+  const name = ALL_NAMES[idx];
+  const sd = studentData[idx];
+  const isActive = currentStudentIdx === idx;
+  const isDone   = usedSet.has(idx) && currentStudentIdx !== idx;
+  let correct=0, wrong=0, total=0, pct=0;
+  if (sd) { correct=sd.correct; wrong=sd.wrong; total=sd.total; pct=total>0?Math.round(correct/total*100):0; }
+  const pctClass = pct>=70?'pct-high':pct>=40?'pct-mid':'pct-low';
+  const cardClass = isActive?'student-card active-student':isDone?'student-card done-student':'student-card';
+  return `
+    <div class="${cardClass}" id="sc-${idx}">
+      ${isActive ? '<span class="active-badge">turno</span>' : ''}
+      <div class="sc-name">${name}</div>
+      <div class="sc-stats">
+        <span class="sc-stat">✅ <span class="val v-green">${correct}</span></span>
+        <span class="sc-stat">❌ <span class="val v-red">${wrong}</span></span>
+        <span class="sc-stat">· <span class="val">${total}</span>Px</span>
+      </div>
+      ${total>0 ? `
+      <div class="sc-bar-bg"><div class="sc-bar-fill" style="width:${pct}%"></div></div>
+      <div class="sc-pct ${pctClass}">${pct}%</div>` : ''}
+    </div>`;
+}
+
+function updateStudentsGrid() {
+  const grid = document.getElementById('studentsGrid');
+  grid.innerHTML = ALL_NAMES.map((_,i) => buildStudentCard(i)).join('');
+}
+updateStudentsGrid();
+
+/* ══ Q&A — MULTIPLE CHOICE ══ */
+// Audio feedback
+function playSound(type) {
+  try {
+    const actx = new (window.AudioContext || window.webkitAudioContext)();
+    if (type === 'correct') {
+      [523,659,784,1047].forEach((freq,i) => {
+        const osc=actx.createOscillator(), gain=actx.createGain();
+        osc.connect(gain); gain.connect(actx.destination);
+        osc.type='sine'; osc.frequency.setValueAtTime(freq, actx.currentTime+i*.1);
+        gain.gain.setValueAtTime(.28, actx.currentTime+i*.1);
+        gain.gain.exponentialRampToValueAtTime(.001, actx.currentTime+i*.1+.25);
+        osc.start(actx.currentTime+i*.1); osc.stop(actx.currentTime+i*.1+.3);
+      });
+    } else {
+      const osc=actx.createOscillator(), gain=actx.createGain();
+      osc.connect(gain); gain.connect(actx.destination);
+      osc.type='sawtooth';
+      osc.frequency.setValueAtTime(220, actx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(110, actx.currentTime+.4);
+      gain.gain.setValueAtTime(.22, actx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(.001, actx.currentTime+.5);
+      osc.start(actx.currentTime); osc.stop(actx.currentTime+.5);
+    }
+  } catch(e) {}
+}
+
+function flashScreen(type) {
+  const el = document.getElementById('flashOverlay');
+  el.style.background = type==='correct'?'rgba(16,185,129,0.18)':'rgba(239,68,68,0.18)';
+  el.style.opacity='1';
+  setTimeout(()=>{ el.style.opacity='0'; }, 250);
+}
+
+function generateOptions(correctIdx) {
+  const qa = ALL_QA[correctIdx];
+  const options = (qa.opts||[qa.a]).map(text=>({ text, correct: text===qa.a }));
+  for (let i=options.length-1;i>0;i--) {
+    const j=Math.floor(Math.random()*(i+1));
+    [options[i],options[j]]=[options[j],options[i]];
+  }
+  return options;
+}
+
+let qaPool=[], qaUsed=0, qaIndex=-1, qaAnswered=false;
+const LETTERS=['A','B','C','D'];
+
+function initQaPool() {
+  qaPool=ALL_QA.map((_,i)=>i);
+  for (let i=qaPool.length-1;i>0;i--) {
+    const j=Math.floor(Math.random()*(i+1));
+    [qaPool[i],qaPool[j]]=[qaPool[j],qaPool[i]];
+  }
+  qaUsed=0; qaIndex=-1; qaAnswered=false;
+}
+initQaPool();
+
+function updateProgress() {
+  const pct=ALL_QA.length?(qaUsed/ALL_QA.length)*100:0;
+  document.getElementById('progressFill').style.width=pct+'%';
+  document.getElementById('progressLabel').textContent=qaUsed+' / '+ALL_QA.length;
+}
+updateProgress();
+
+function showQuestion() {
+  if (qaUsed>=ALL_QA.length) { showEndScreen(); return; }
+  if (currentStudentIdx===null) return;
+  qaIndex=qaPool[qaUsed]; qaAnswered=false;
+
+  document.getElementById('qaLabel').className='qa-label l-q';
+  document.getElementById('qaLabel').textContent='❓ Pregunta';
+  document.getElementById('qaText').textContent=ALL_QA[qaIndex].q;
+  document.getElementById('qaNumber').textContent='Pregunta '+(qaUsed+1)+' de '+ALL_QA.length;
+  document.getElementById('qaFeedback').className='qa-feedback';
+  document.getElementById('qaNextBtn').className='qa-next-btn';
+
+  const opts=generateOptions(qaIndex);
+  const grid=document.getElementById('optionsGrid');
+  grid.innerHTML='';
+  opts.forEach((opt,i)=>{
+    const btn=document.createElement('button');
+    btn.className='opt-btn'; btn.dataset.correct=opt.correct;
+    btn.innerHTML='<span class="opt-letter">'+LETTERS[i]+'</span><span>'+opt.text+'</span>';
+    btn.onclick=()=>selectOption(btn,opt.correct);
+    grid.appendChild(btn);
+  });
+}
+
+function selectOption(btn, isCorrect) {
+  if (qaAnswered) return;
+  qaAnswered=true;
+  document.querySelectorAll('.opt-btn').forEach(b=>b.disabled=true);
+
+  const feedback=document.getElementById('qaFeedback');
+  if (isCorrect) {
+    btn.classList.add('correct');
+    playSound('correct'); flashScreen('correct');
+    feedback.className='qa-feedback fb-correct show';
+    feedback.textContent='✅ ¡Correcto! '+ALL_QA[qaIndex].a;
+    launchConfetti();
+    if (currentStudentIdx!==null) {
+      studentData[currentStudentIdx].correct++;
+      studentData[currentStudentIdx].total++;
+    }
+  } else {
+    btn.classList.add('wrong');
+    playSound('wrong'); flashScreen('wrong');
+    document.querySelectorAll('.opt-btn').forEach(b=>{ if(b.dataset.correct==='true') b.classList.add('correct'); });
+    feedback.className='qa-feedback fb-wrong show';
+    feedback.textContent='❌ Incorrecto. La respuesta era: '+ALL_QA[qaIndex].a;
+    if (currentStudentIdx!==null) {
+      studentData[currentStudentIdx].wrong++;
+      studentData[currentStudentIdx].total++;
+    }
+  }
+  document.getElementById('qaLabel').className='qa-label '+(isCorrect?'l-a':'l-idle');
+  document.getElementById('qaLabel').textContent=isCorrect?'✅ ¡Correcto!':'❌ Incorrecto';
+  document.getElementById('qaNextBtn').className='qa-next-btn show';
+
+  // Update UI
+  if (currentStudentIdx!==null) {
+    updateCsbStats(currentStudentIdx);
+    updateStudentsGrid();
+    document.getElementById('exportBtn').disabled=false;
+  }
+  updateProgress();
+}
+
+function nextQuestion() {
+  qaUsed++;
+  updateProgress();
+  // Re-trigger card animation
+  const card=document.getElementById('qaCard');
+  card.style.animation='none'; void card.offsetWidth; card.style.animation='';
+  if (qaUsed>=ALL_QA.length) { showEndScreen(); }
+  else { showQuestion(); }
+}
+
+function showEndScreen() {
+  document.getElementById('qaCard').style.display='none';
+  const es=document.getElementById('endScreen');
+  es.classList.add('show');
+  // Build results table
+  const rows = ALL_NAMES.map((name,i) => {
+    const sd=studentData[i]||{correct:0,wrong:0,total:0};
+    const pct=sd.total>0?Math.round(sd.correct/sd.total*100):'-';
+    const pctClass=sd.total>0?(pct>=70?'pct-high':pct>=40?'pct-mid':'pct-low'):'';
+    return `<tr>
+      <td>${name}</td>
+      <td style="color:var(--teal)">${sd.correct}</td>
+      <td style="color:#f87171">${sd.wrong}</td>
+      <td>${sd.total}</td>
+      <td class="pct-cell ${pctClass}">${sd.total>0?pct+'%':'-'}</td>
+    </tr>`;
+  }).join('');
+  document.getElementById('endTable').innerHTML=`
+    <thead><tr>
+      <th>Alumno</th><th>✅</th><th>❌</th><th>Total</th><th>%</th>
+    </tr></thead>
+    <tbody>${rows}</tbody>`;
+  launchConfetti();
+}
+
+function resetQa() {
+  initQaPool(); updateProgress();
+  studentData={};
+  currentStudentIdx=null;
+  document.getElementById('qaCard').style.display='';
+  document.getElementById('endScreen').classList.remove('show');
+  document.getElementById('qaLabel').className='qa-label l-idle';
+  document.getElementById('qaLabel').textContent='GIRA LA RULETA PARA EMPEZAR';
+  document.getElementById('qaText').textContent='Selecciona un alumno con la ruleta para comenzar las preguntas';
+  document.getElementById('qaNumber').textContent='';
+  document.getElementById('optionsGrid').innerHTML='';
+  document.getElementById('qaFeedback').className='qa-feedback';
+  document.getElementById('qaNextBtn').className='qa-next-btn';
+  document.getElementById('exportBtn').disabled=true;
+  clearActiveStudent();
+  updateStudentsGrid();
+  resetWheel();
+}
+
+/* ══ EXCEL EXPORT ══ */
+function exportExcel() {
+  // Build CSV-style data, then encode as proper xlsx-compatible CSV
+  const headers = ['Alumno','Correctas','Incorrectas','Total Preguntas','% Efectividad'];
+  const rows = ALL_NAMES.map((name,i) => {
+    const sd=studentData[i]||{correct:0,wrong:0,total:0};
+    const pct=sd.total>0?(sd.correct/sd.total*100).toFixed(1):'0';
+    return [name, sd.correct, sd.wrong, sd.total, pct+'%'];
+  });
+
+  // Use SheetJS via CDN
+  const script=document.createElement('script');
+  script.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+  script.onload=()=>{
+    const wb=XLSX.utils.book_new();
+
+    // Main results sheet
+    const wsData=[headers,...rows];
+    const ws=XLSX.utils.aoa_to_sheet(wsData);
+
+    // Column widths
+    ws['!cols']=[{wch:20},{wch:12},{wch:13},{wch:16},{wch:14}];
+
+    // Detail sheet — per-question log would need more data, so we do summary
+    const ws2Data=[
+      ['Reporte de Examen Oral — Frateli Centro Educativo'],
+      ['Generado:', new Date().toLocaleString('es-MX')],
+      ['Total de preguntas del banco:', ALL_QA.length],
+      ['Preguntas aplicadas:', qaUsed],
+      [],
+      ['Alumno','Correctas','Incorrectas','Total','Efectividad'],
+      ...rows
+    ];
+    const ws2=XLSX.utils.aoa_to_sheet(ws2Data);
+    ws2['!cols']=[{wch:22},{wch:12},{wch:13},{wch:10},{wch:14}];
+    ws2['!merges']=[{s:{r:0,c:0},e:{r:0,c:4}}];
+
+    XLSX.utils.book_append_sheet(wb,ws,'Resultados');
+    XLSX.utils.book_append_sheet(wb,ws2,'Reporte');
+    XLSX.writeFile(wb,'Examen_Oral_Resultados.xlsx');
+  };
+  document.head.appendChild(script);
+}
+
+/* ══ CONFETTI ══ */
+const confCanvas=document.getElementById('confetti-canvas');
+const cctx=confCanvas.getContext('2d');
+let pieces=[];
+function resizeConf(){ confCanvas.width=window.innerWidth; confCanvas.height=window.innerHeight; }
+resizeConf(); window.addEventListener('resize',resizeConf);
+function launchConfetti() {
+  pieces=[];
+  const colors=['#3b82f6','#8b5cf6','#f59e0b','#10b981','#a855f7','#f97316','#22c55e'];
+  for (let i=0;i<130;i++) {
+    pieces.push({
+      x:Math.random()*confCanvas.width, y:-10,
+      vx:(Math.random()-.5)*5, vy:2+Math.random()*4,
+      color:colors[Math.floor(Math.random()*colors.length)],
+      size:6+Math.random()*8, rot:Math.random()*360,
+      rspd:(Math.random()-.5)*6,
+      shape:Math.random()>.5?'rect':'circle'
+    });
+  }
+  animateConf();
+}
+function animateConf() {
+  cctx.clearRect(0,0,confCanvas.width,confCanvas.height);
+  pieces=pieces.filter(p=>p.y<confCanvas.height+20);
+  if (!pieces.length) return;
+  pieces.forEach(p=>{
+    p.x+=p.vx; p.y+=p.vy; p.vy+=.05; p.rot+=p.rspd;
+    cctx.save(); cctx.translate(p.x,p.y); cctx.rotate(p.rot*Math.PI/180);
+    cctx.fillStyle=p.color;
+    if (p.shape==='rect') { cctx.fillRect(-p.size/2,-p.size/4,p.size,p.size/2); }
+    else { cctx.beginPath(); cctx.arc(0,0,p.size/2,0,2*Math.PI); cctx.fill(); }
+    cctx.restore();
+  });
+  requestAnimationFrame(animateConf);
+}
+
+</script>
+</body>
+</html>
