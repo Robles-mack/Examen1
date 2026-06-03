@@ -952,8 +952,63 @@ function updateCounter() {
   document.getElementById('totalCount').textContent=ALL_NAMES.length;
 }
 
+/* ══ WHEEL SOUND ══ */
+let wheelAudioCtx = null;
+let wheelTickSource = null;
+
+function getAudioCtx() {
+  if (!wheelAudioCtx) wheelAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  return wheelAudioCtx;
+}
+
+function playTick(speed) {
+  // speed: 0 (slow) → 1 (fast). Pitch and volume scale with speed.
+  try {
+    const actx = getAudioCtx();
+    const osc  = actx.createOscillator();
+    const gain = actx.createGain();
+    osc.connect(gain); gain.connect(actx.destination);
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(300 + speed * 900, actx.currentTime);
+    gain.gain.setValueAtTime(0.18 + speed * 0.22, actx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + 0.04);
+    osc.start(actx.currentTime);
+    osc.stop(actx.currentTime + 0.045);
+  } catch(e) {}
+}
+
+function playWheelStop() {
+  // Satisfying "thud" when it stops
+  try {
+    const actx = getAudioCtx();
+    // Low thump
+    const osc  = actx.createOscillator();
+    const gain = actx.createGain();
+    osc.connect(gain); gain.connect(actx.destination);
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(180, actx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(60, actx.currentTime + 0.18);
+    gain.gain.setValueAtTime(0.45, actx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + 0.22);
+    osc.start(actx.currentTime);
+    osc.stop(actx.currentTime + 0.25);
+    // Click transient
+    const osc2 = actx.createOscillator();
+    const gain2 = actx.createGain();
+    osc2.connect(gain2); gain2.connect(actx.destination);
+    osc2.type = 'square';
+    osc2.frequency.setValueAtTime(900, actx.currentTime);
+    gain2.gain.setValueAtTime(0.15, actx.currentTime);
+    gain2.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + 0.04);
+    osc2.start(actx.currentTime);
+    osc2.stop(actx.currentTime + 0.05);
+  } catch(e) {}
+}
+
 function spinWheel() {
   if (isSpinning||availableCount()===0) return;
+  // Resume audio context on user gesture
+  try { getAudioCtx().resume(); } catch(e) {}
   // If there's a current student mid-session, commit them first
   if (currentStudentIdx !== null) {
     usedSet.add(currentStudentIdx);
@@ -966,16 +1021,34 @@ function spinWheel() {
   const target=currentAngle+extra*2*Math.PI+Math.random()*2*Math.PI;
   const duration=4000+Math.random()*1500;
   const t0=performance.now(), a0=currentAngle;
+  const n=ALL_NAMES.length;
+  const arc=(2*Math.PI)/n;
+
+  let lastTickAngle = currentAngle;
+  let lastTickTime  = 0;
+
   function ease(t){ return 1-Math.pow(1-t,4); }
   function animate(now) {
     const p=Math.min((now-t0)/duration,1);
+    const speed = 1 - ease(p);          // 1=fast, 0=stopped
     currentAngle=a0+(target-a0)*ease(p);
     drawWheel(currentAngle);
+
+    // Tick whenever we cross a segment boundary
+    const angleDiff = Math.abs(currentAngle - lastTickAngle);
+    const minInterval = 30 + (1-speed)*220; // ms between ticks slows down
+    if (angleDiff >= arc && (now - lastTickTime) > minInterval) {
+      playTick(speed);
+      lastTickAngle = currentAngle;
+      lastTickTime  = now;
+    }
+
     if (p<1) { requestAnimationFrame(animate); }
     else {
       currentAngle=target%(2*Math.PI);
       isSpinning=false;
       document.getElementById('wheelWrap').classList.remove('spinning');
+      playWheelStop();
       pickWinner();
     }
   }
